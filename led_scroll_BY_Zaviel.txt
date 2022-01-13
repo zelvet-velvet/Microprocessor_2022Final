@@ -1,0 +1,89 @@
+//
+//    ■  □   ( ← strange char 030 )
+//
+//
+//  some introductions below↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+//
+//         r1   r2   r3   r4
+//      11 | 11 | 11 | 11 |
+//      c1   c2   c3   c4
+//        
+//		  	   c (anode)  
+//	(cathode)r   1 2 3 4 5 6 7 8
+//             1 □ □ □ □ □ □ □ □                                 
+//             2 □ □ □ □ □ □ □ □   
+//             3 □ □ □ □ □ □ □ □ 
+//             4 □ □ □ □ □ □ □ □    
+//             5 □ □ □ □ □ □ □ □    
+//             6 □ □ □ □ □ □ □ □
+//             7 □ □ □ □ □ □ □ □
+//             8 □ □ □ □ □ □ □ □
+//
+// 		          ( by Zaviel  ) 
+// 
+//
+//         r5   r6   r7   r8
+//      11 | 11 | 11 | 11 |
+//      c5   c6   c7   c8
+//
+//  For the purpose to make a led scorll, we set cathode as #11111110B.
+//  Let bit 0 move to left block each time.
+//	
+//
+//  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+ORG 0H
+
+	MOV TMOD,#01H				//set Timmer mode
+	MOV R2,#0FEH				//setting cathode as #11111110B
+
+		
+Animation_cycle:	
+	
+	MOV DPTR,#Image_table		//put image table into dptr
+	MOV R3,#036H				//
+	                                   
+		Scroll_image:                   
+                                   
+			MOV	R0,#04H                  
+                                       
+			NESTED_LOOP:                 
+	                                     
+				MOV R4,#08H             
+	                                      
+				LOOP:	               
+	                                        
+					MOV A,R2                
+					MOV P3,A                
+					RL A                   
+					MOV R2,A                   
+					MOV A,R4               
+					MOVC A,@A+DPTR              
+					MOV P2,A                      
+					ACALL DELAY                  
+					DJNZ R4,LOOP
+                                         
+			DJNZ R0,NESTED_LOOP               
+			INC DPTR                       
+		DJNZ R3,Scroll_image                     
+		SJMP Animation_mode                  
+	                                      
+	
+DELAY:	
+	MOV TH0,#0EFH
+	MOV TL0,#059H
+	SETB TR0
+HERE:	
+	JNB TF0,HERE
+	CLR TR0
+	CLR TF0
+	RET
+
+ORG 50H
+
+
+LED_scroll_table:	DB 0H,0H,0H,0H,0H,00000000B,11111111B,10011001B,01110110B,00000000B,00001111B,11111000B,00001111B,00000000B,00000000B,11110001B,10001001B,10000101B,10000011B,00000000B,01110000B,10001000B,10001000B,10001000B,01110000B,10000000B,00000000B,00111000B,01100000B,10000000B,01100000B,00111000B,00000000B,11111010B,00000000B,01110000B,10101000B,10101000B,10110000B,00000000B,11111111B,00000000B,00000000B,10111111B,00000000B,00000000B,00000000B
+
+
+END

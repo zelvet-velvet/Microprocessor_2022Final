@@ -1,0 +1,63 @@
+
+
+
+ORG 0H
+
+	MOV TMOD,#01H				//set Timmer mode
+	MOV R2,#0FEH				//setting cathode as #11111110B
+
+		
+Animation_cycle:	
+	
+	MOV DPTR,#LED_scroll_table		//put image table into dptr
+	MOV R3,#05H				//
+	                                   
+		Scroll_image:                   
+                                   
+			MOV	R0,#08H                  
+                                       
+			NESTED_LOOP:                 
+	                                     
+				MOV R4,#08H             
+	                                      
+				LOOP:	               
+	                                        
+					MOV A,R2                
+					MOV P3,A                
+					RL A                   
+					MOV R2,A                   
+					MOV A,R4               
+					MOVC A,@A+DPTR              
+					MOV P2,A                      
+					ACALL DELAY                  
+					DJNZ R4,LOOP
+                                         
+			DJNZ R0,NESTED_LOOP               
+			INC DPTR 
+			INC DPTR 
+			INC DPTR 
+			INC DPTR 
+			INC DPTR 
+			INC DPTR 
+			INC DPTR 
+			INC DPTR 
+		DJNZ R3,Scroll_image                     
+		SJMP Animation_cycle                  
+	                                      
+	
+DELAY:	
+	MOV TH0,#0EFH
+	MOV TL0,#059H
+	SETB TR0
+HERE:	
+	JNB TF0,HERE
+	CLR TR0
+	CLR TF0
+	RET
+
+ORG 50H
+
+
+LED_scroll_table:	DB 00H,00110000B,00110000B,00011000B,00111100B,01011010B,01011010B,00101000B,00100100B,00110000B,00110000B,00011000B,00111100B,00111100B,01011100B,00011000B,00011000B,00110000B,00110000B,00011000B,00111100B,01011010B,00011010B,00101000B,00101100B,00110000B,00110000B,00011000B,11111100B,00011010B,00011000B,00101000B,00100110B,00110000B,00110000B,10011000B,01111100B,00011010B,00011001B,00101000B,00101100B
+
+END
