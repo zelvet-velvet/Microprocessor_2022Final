@@ -6,63 +6,69 @@ org 00h
 
 mov r3,#24
 
-	q1:
-clr data7
-mov P0,#0ffh
-acall clock
-djnz r3,q1
+q1:
+	clr data7
+	mov P0,#0ffh
+	acall clock
+	djnz r3,q1
 
 
-	initial:  
-mov r3,#25
-mov r4,#18
-setb data7
-mov dptr,#data0
-mov r0,#255
+initial:  
+	mov r3,#25
+	mov r4,#18
+	setb data7
+	mov dptr,#data0
+	mov r0,#255
 
-	back1:
-mov 20h,dpl
-mov 21h,dph
+back1:
+	mov 20h,dpl
+	mov 21h,dph
 
-	back0:
-clr a
-movc a,@a+dptr
-cjne a,#99h,s1   ; 99h for exit
-sjmp initial
+back0:
+	clr a
+	movc a,@a+dptr
+	cjne a,#99h,s1   ; 99h for exit
+	sjmp initial
 
-	s1:
-acall clock
-clr data7
-inc dptr
-djnz r3, back0
-mov r3,#24
-setb data7
-mov dpl,20h
-mov dph,21h
-djnz r4,back1
-mov r4,#18	 
-inc dptr
-djnz r0, back1
-sjmp initial
+s1:
+	acall clock
+	clr data7
+	inc dptr
+	djnz r3, back0
+	mov r3,#24
+	setb data7
+	mov dpl,20h
+	mov dph,21h
+	djnz r4,back1
+	mov r4,#18	 
+	inc dptr
+	djnz r0, back1
+	sjmp initial
 		   
- clock:
-clr clk
-acall delay_ms
-mov P0,#0ffh
-setb clk	  
-mov P0,a          ; port 0 is attached to rows of matrix
+clock:
+	clr clk
+	acall delay_ms
+	mov P0,#0ffh
+	setb clk	  
+	mov P0,a          ; port 0 is attached to rows of matrix
 ret	  
 
 
-delay_ms:  mov r1,#7
-	ad15:   mov r2,#20
+delay_ms:  
 
-	 ad5:  djnz r2,ad5
-		  djnz r1,ad15
-             ret
+	mov r1,#7
+	ad15:   
+		mov r2,#20
+
+	ad5:  
+		djnz r2,ad5
+		djnz r1,ad15
+ret
 
 
-data0: db 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh
+data0:
+
+		db 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh
      	db 00h,36h,36h,36h,3eh,0ffh;E
 		db 1fh,1fh,0ffh					 ;.
 		db 41h,3eh,3eh,3eh,5dh,0ffh	  ;C
@@ -73,7 +79,9 @@ data0: db 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,
 	    db 7dh,40h,3dh,3fh,5fh,0ffh  ;t
 	    db 00h,77h,7bh,7bh,07h,0ffh		   ;h
 		db 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	;space
-		 db 03h,0f5h,0f6h,0f5h,03h,0ffh		;A
+		db 03h,0f5h,0f6h,0f5h,03h,0ffh		;A
 	    db 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,99h
 
 end
+
+
